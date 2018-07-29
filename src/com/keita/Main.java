@@ -3,9 +3,15 @@ package com.keita;
 public class Main {
 
     public static void main(String[] args) {
+
+        boolean runGame = true;
         GWorkStation wStation = new GWorkStation();
 
-        wStation.startGame();
-	// write your code here
+        while (runGame) {
+            runGame = wStation.startGame(runGame);
+        }
+
+        System.out.println("");
+
     }
 }
