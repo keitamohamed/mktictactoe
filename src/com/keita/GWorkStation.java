@@ -10,6 +10,7 @@ public class GWorkStation {
     private List<Player> players;
     private String dashBoard[][] = new String[3][3];
     private String playerTurn = "X";
+    private boolean found;
 
     public GWorkStation() {
         this.players = new ArrayList<>();
@@ -21,25 +22,27 @@ public class GWorkStation {
             addPlayer(players);
             addValueInDashBoard(dashBoard);
             drawDashBoard();
-            makeAMove(dashBoard, enterMove(players, playerTurn));
+            makeAMove(dashBoard, enterMove(players, playerTurn), playerTurn);
         }
-        while (!fullSize(dashBoard) && !winnerFound(dashBoard, players, playerTurn)) {
+
+        while (!winnerFound(dashBoard, players, playerTurn)) {
             drawDashBoard();
-            makeAMove(dashBoard, enterMove(players, playerTurn));
-            if (fullSize(dashBoard))
-                drawDashBoard();
+            makeAMove(dashBoard, enterMove(players, playerTurn), playerTurn);
+
+//            if (fullSize(dashBoard))
+//                drawDashBoard();
         }
     }
 
-// ================= All private methods ==========================
-    private void makeAMove(String[][] dashBoard, String move) {
+    // ================= All private methods ==========================
+    private void makeAMove(String[][] dashBoard, String move, String playerTurn) {
 
         while (!checkValidation(dashBoard, move)) {
             drawDashBoard();
             System.out.println("\n\tInvalid move. Move to a space (between E1 to E9): ");
             move = sc.nextLine().toUpperCase();
         }
-        upDateDashBoard(dashBoard, move, playerTurn);
+        upDateDashBoard(dashBoard, move);
     }
 
     private boolean checkValidation(String[][] dashBoard, String move) {
@@ -77,15 +80,14 @@ public class GWorkStation {
             }
     }
 
-    private void upDateDashBoard(String[][] dashBoard, String move, String playerTurn) {
-
+    private void upDateDashBoard(String[][] dashBoard, String move) {
         for (int i = 0; i < dashBoard.length; i++)
-            for (int j = 0; j< dashBoard[i].length; j++)
+            for (int j = 0; j < dashBoard[i].length; j++)
                 if (dashBoard[i][j].equals(move)) {
                     dashBoard[i][j] = this.playerTurn;
-                    this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
-                    return;
+                    break;
                 }
+
     }
 
     private void addPlayer(List<Player> players) {
@@ -99,28 +101,29 @@ public class GWorkStation {
     }
 
     private boolean winnerFound(String[][] dashBoard, List<Player> players, String playerTurn) {
-        boolean winnerFound = false;
-        for (int i = 0; i < dashBoard.length; i++) {
-            for (int j = 0; j < dashBoard[i].length; j++) {
-                if (dashBoard[i][j].equals(playerTurn))
-                    winnerFound = true;
-                else {
-                    winnerFound = false;
-                    break;
-                }
+
+        for (String[] column : dashBoard) {
+            found = true;
+            for (String row : column) {
+                if (!row.equals(playerTurn))
+                    found = false;
             }
+
+            if (found) {
+                winner(players);
+                return true;
+            }
+
+            if (winnerByColumn(dashBoard, players, playerTurn))
+                return true;
         }
 
-        if (winnerFound)
-            if (playerTurn.equals("X"))
-                System.out.println(players.get(0).getFullName() + " is winner");
-            else
-                System.out.println(players.get(1).getFullName() + " is winner");
-        return winnerFound;
+        this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
+        return false;
     }
 
     private String enterMove(List<Player> players, String playerTurn) {
-        System.out.println("\n\t" + getPlayerName(players, playerTurn)+ " make a move to an empty space: ");
+        System.out.println("\n\t" + getPlayerName(players, playerTurn) + " make a move to an empty space: ");
         return sc.nextLine().toUpperCase();
     }
 
@@ -130,13 +133,44 @@ public class GWorkStation {
         return players.get(1).getFullName();
     }
 
-    private boolean fullSize(String[][] dashBoard) {
-        for (String[] column : dashBoard) {
-            for (String row : column) {
-                if (!row.equals("X") && !row.equals("O"))
-                    return false;
+    // Still working need more work *** Need to go through the column and
+    // get their value and compare it with the player for a win
+    private boolean winnerByColumn(String[][] dashBoard, List<Player> players, String playerTurn) {
+        int columnPosition = 0;
+        for (int i = 0; i < players.size(); i++) {
+            int counter = 0;
+            for (int col = 0; col < players.size(); col++) {
+                for (int c = 0; c < dashBoard.length; c++) {
+                    for (int r = 0; r < dashBoard[c].length; r++) {
+                        if (dashBoard[c][col].equals(playerTurn)) {
+                            System.out.println("Column " + c + " position " + col + " turn " + playerTurn);
+                            counter++;
+                        }
+                        break;
+                    }
+                }
             }
+            columnPosition++;
+
+            if (counter == 3) {
+                winner(players);
+                return true;
+            }
+
         }
-        return true;
+
+        return false;
+    }
+
+    private void winner(List<Player> players) {
+        if (playerTurn.equals("X")) {
+            drawDashBoard();
+            System.out.println("\nGame over. " + players.get(0).getFullName() + " won");
+        } else {
+            drawDashBoard();
+            System.out.println("\nGame over. " + players.get(1).getFullName() + " won");
+        }
+        this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
+        this.found = false;
     }
 }
