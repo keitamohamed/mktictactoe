@@ -9,7 +9,7 @@ will ask the players if they want to re-match or not.
 
 #### Below are some screen shots of the game
 This is a screen shot of the **dashboard**.
-![](image/dashboard.png)
+![](image/dashboard.PNG)
 
 This is a screen shot of the player record after 
 there was a winner
