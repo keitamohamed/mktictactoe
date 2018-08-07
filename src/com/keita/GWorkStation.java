@@ -76,7 +76,7 @@ public class GWorkStation {
 
     private void drawDashBoard() {
 
-        System.out.println("\n\t\t" + ("Keita Tic Tac Toe Game\t\n" +
+        System.out.println("\n\t\t" + ("MK: Tic Tac Toe Game\t\n" +
                 "\t================================").toUpperCase());
         for (String[] aDashBoard : dashBoard) {
             for (String row : aDashBoard) {
