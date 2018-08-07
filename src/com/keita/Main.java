@@ -10,8 +10,6 @@ public class Main {
         while (runGame) {
             runGame = wStation.startGame(runGame);
         }
-
-        System.out.println("");
-
+        System.out.println();
     }
 }

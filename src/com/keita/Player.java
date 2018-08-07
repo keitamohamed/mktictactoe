@@ -17,9 +17,9 @@ public class Player {
         return "Name: " + fullName + " and gameWon: " + gameWon;
     }
 
-    public void drawRecord(Player player1, Player player2) {
+    public void drawRecord(Player player1, int gameDraw, Player player2) {
         System.out.println(player1.getFullName() + "\t|| Game Won: " + player1.gameWon  +
-                "\t|| Game Draw: " + 0 + "\t|| Game Won: " + player2.gameWon +
+                "\t|| Game Draw: " + gameDraw + "\t|| Game Won: " + player2.gameWon +
         " \t|| " + player2.getFullName() + "\n");
     }
 

@@ -13,6 +13,7 @@ public class GWorkStation {
     private String playerTurn = "X";
     private boolean found;
     private int gameWon;
+    private int gameDraw;
 
     public GWorkStation() {
         this.players = new ArrayList<>();
@@ -25,12 +26,12 @@ public class GWorkStation {
             addPlayer(players);
             addValueInDashBoard(dashBoard);
             drawDashBoard();
-            makeAMove(dashBoard, enterMove(players, playerTurn), playerTurn);
+            makeAMove(dashBoard, enterMove(players, playerTurn));
         }
 
         while (!winnerFound(dashBoard, players, playerTurn)) {
             drawDashBoard();
-            makeAMove(dashBoard, enterMove(players, playerTurn), playerTurn);
+            makeAMove(dashBoard, enterMove(players, playerTurn));
         }
 
         System.out.println("Would you like to re-match? (yes/no): ");
@@ -42,14 +43,14 @@ public class GWorkStation {
         else {
             addValueInDashBoard(dashBoard);
             drawDashBoard();
-            makeAMove(dashBoard, enterMove(players, playerTurn), playerTurn);
+            makeAMove(dashBoard, enterMove(players, playerTurn));
         }
 
         return runGame;
     }
 
     // ================= All private methods ==========================
-    private void makeAMove(String[][] dashBoard, String move, String playerTurn) {
+    private void makeAMove(String[][] dashBoard, String move) {
 
         while (!checkValidation(dashBoard, move)) {
             drawDashBoard();
@@ -132,6 +133,9 @@ public class GWorkStation {
                 return true;
             if (ninetyDegreeAngle(dashBoard, players, playerTurn))
                 return true;
+            if (draw(dashBoard, players, playerTurn)) {
+                return true;
+            }
         }
 
         this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
@@ -201,19 +205,36 @@ public class GWorkStation {
         return false;
     }
 
+    private boolean draw(String[][] dashBoard, List<Player> players, String playerTurn) {
+        for (int i = 0; i < dashBoard.length; i++) {
+            for (int j = 0; j < dashBoard[i].length; j++) {
+                if (!dashBoard[i][j].equals("X") && !dashBoard[i][j].equals("O"))
+                    return false;
+            }
+        }
+
+        drawDashBoard();
+        gameDraw += 1;
+        System.out.println("\nGame over. it's a draw game!");
+        player.drawRecord(players.get(0), gameDraw, players.get(players.size() - 1));
+
+        this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
+        return true;
+    }
+
     private void winner(List<Player> players) {
         if (playerTurn.equals("X")) {
             drawDashBoard();
             gameWon = players.get(0).getGameWon() + 1;
             players.get(0).setGameWon(gameWon);
             System.out.println("\nGame over. " + players.get(0).getFullName() + " won");
-            player.drawRecord(players.get(0), players.get(players.size() - 1));
+            player.drawRecord(players.get(0), gameDraw, players.get(players.size() - 1));
         } else {
             drawDashBoard();
             gameWon = players.get(players.size() - 1).getGameWon() + 1;
             players.get(players.size() - 1).setGameWon(gameWon);
             System.out.println("\nGame over. " + players.get(1).getFullName() + " won");
-            player.drawRecord(players.get(0), players.get(players.size() - 1));
+            player.drawRecord(players.get(0), gameDraw, players.get(players.size() - 1));
         }
         this.playerTurn = (playerTurn.equals("X")) ? "O" : "X";
         this.found = false;
